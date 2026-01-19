@@ -7,7 +7,11 @@ const showBorder = computed(() => y.value > 0)
 </script>
 
 <template>
-  <UApp>
+  <UApp
+    :toaster="{
+      position: 'top-right'
+    }"
+  >
     <UHeader :class="[showBorder ? '' : 'border-none', 'transition-all duration-300']">
       <template #left>
         <NuxtLink to="/">

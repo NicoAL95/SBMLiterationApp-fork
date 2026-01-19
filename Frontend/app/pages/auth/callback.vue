@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useAuth } from '~/apis/api'
 
+definePageMeta({
+  layout: 'landing'
+})
+
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuth()

@@ -34,7 +34,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <UApp>
+  <UApp
+    :toaster="{
+      position: 'top-right'
+    }"
+  >
     <UHeader>
       <template #left>
         <NuxtLink to="/">
