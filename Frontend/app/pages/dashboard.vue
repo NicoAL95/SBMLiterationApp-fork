@@ -27,9 +27,9 @@
 import ReadingResources from '~/components/reading-passport/ReadingResources.vue'
 import Streak from '~/components/reading-passport/Streak.vue'
 
-definePageMeta({
-  middleware: 'auth'
-})
+// definePageMeta({
+//   middleware: 'auth'
+// })
 
 const getCurrentWeekDates = () => {
   const week = []
