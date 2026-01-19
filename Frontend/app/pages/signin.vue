@@ -8,22 +8,43 @@
         description="Enter your credentials to access your account."
         icon="i-lucide-user"
         :providers="providers"
+        :loading="loading"
       />
     </UPageCard>
   </div>
 </template>
 
 <script setup lang="ts">
-const providers = [
+definePageMeta({
+  layout: 'landing'
+})
+
+const loading = ref(false)
+
+const $api = useNuxtApp().$backendApi
+const providers = ref([
   {
+    loading: loading,
     label: 'Google',
     icon: 'i-simple-icons-google',
     onClick: async () => {
-      const { data, status } = await useFetch<{ authUrl: string }>('api/v1/auth/google/url')
+      try {
+        loading.value = true
+        const result = await $api<{ authUrl: string }>('/auth/google/url')
 
-      if (status.value === 'success')
-        window.location.href = data.value!.authUrl
+        if (result.authUrl)
+          window.location.href = result.authUrl
+      } catch {
+        useToast().add({
+          title: 'Error',
+          description: 'Failed to initiate Google sign-in.',
+          color: 'error',
+          icon: 'i-lucide-circle-off'
+        })
+      } finally {
+        loading.value = false
+      }
     }
   }
-]
+])
 </script>
