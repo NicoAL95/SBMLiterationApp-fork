@@ -19,4 +19,20 @@
 
 .nuxt-icon svg {
   margin-bottom: 0 !important;
+
+  --color-base: #0b4c53;
+
+  --font-poppins: "Poppins", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-poppins;
+  }
+}
+
+@layer utilities {
+  .sidepad {
+    @apply px-[40px] md:px-[100px];
+  }
 }

@@ -7,12 +7,11 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/icon',
     '@pinia/nuxt',
+    '@nuxtjs/google-fonts',
     'nuxt-icons'
   ],
 
-  plugins: [
-    '~/plugins/fetch'
-  ],
+  plugins: ['~/plugins/fetch'],
 
   devtools: {
     enabled: true
@@ -41,6 +40,13 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  googleFonts: {
+    families: {
+      Poppins: [300, 400, 500, 600, 700]
+    },
+    display: 'swap'
   },
   icon: {
     serverBundle: {
