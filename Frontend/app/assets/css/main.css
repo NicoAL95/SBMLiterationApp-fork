@@ -3,6 +3,8 @@
 
 @theme static {
   --font-sans: "Public Sans", sans-serif;
+  --color-base: #0b4c53;
+  --font-poppins: "Poppins", sans-serif;
 
   --color-green-50: #effdf5;
   --color-green-100: #d9fbe8;
@@ -37,4 +39,8 @@
   /* .sidepad {
     @apply px-[40px] md:px-[100px];
   } */
+}
+
+.nuxt-icon svg {
+  margin-bottom: 0 !important;
 }
