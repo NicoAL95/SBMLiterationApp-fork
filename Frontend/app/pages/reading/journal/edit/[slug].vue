@@ -1,52 +1,79 @@
 <script lang="ts" setup>
-import { $authedFetch } from '~/apis/api'
-import ReadingResourceForm, { type ReadingResourceSchema } from '~/components/reading-passport/ReadingResourceForm.vue'
+import { $authedFetch } from "~/apis/api";
+import ReadingResourceForm, {
+  type ReadingResourceSchema,
+} from "~/components/reading-passport/ReadingResourceForm.vue";
 
-const slug = useRoute().params.slug as string
-const formRef = useTemplateRef<typeof ReadingResourceForm>('formRef')
+const slug = useRoute().params.slug as string;
+const formRef = useTemplateRef<typeof ReadingResourceForm>("formRef");
 
 // TODO-SSR-Fetch
 onMounted(async () => {
-  const response = await $authedFetch<Omit<ReadingResourceSchema, 'authors'> & { authors: string }>(`/reading-resources/${slug}`)
+  const response = await $authedFetch<
+    Omit<ReadingResourceSchema, "authors"> & { authors: string }
+  >(`/reading-resources/${slug}`);
   formRef.value?.setState({
     ...response,
-    authors: response.authors.length > 0 ? response.authors.split(',') : ['']
-  })
-})
+    authors: response.authors.length > 0 ? response.authors.split(",") : [""],
+  });
+});
 
-const loading = ref(false)
-async function handleSubmit(data: Omit<ReadingResourceSchema, 'authors'> & { authors: string }) {
+const loading = ref(false);
+async function handleSubmit(
+  data: Omit<ReadingResourceSchema, "authors"> & { authors: string },
+) {
   try {
-    loading.value = true
+    loading.value = true;
     await $authedFetch(`/reading-resources/${slug}`, {
-      method: 'PUT',
+      method: "PUT",
       body: {
         ...data,
-        userId: 1
-      }
-    })
+        userId: 1,
+      },
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
 
 <template>
   <!-- TODO: Adjust spacing on the page -->
-  <div class="flex flex-col items-center justify-center gap-4 p-4 h-full">
+  <div class="flex flex-col items-center justify-center gap-4 h-full">
     <UContainer class="flex flex-col gap-y-4">
       <!-- TODO: Style below card to follow figma design -->
       <UCard
-        class="overflow-visible mb-[100px]"
+        class="overflow-visible"
+        :ui="{
+          header: ' border-0',
+          root: 'bg-[#265FC4] mx-[-16px] sm:mx-[-24px] lg:mx-[-32px] rounded-t-none rounded-b-3xl px-4 py-4',
+        }"
       >
-        <UPageHeader
-          class="border-none"
-          title="Edit Journal/Article"
-        />
+        <template #header>
+          <div class="flex items-start justify-between gap-2">
+            <div class="text-white">
+              <UIcon name="i-heroicons-chevron-left" class="size-6" />
+            </div>
+            <UPageHeader
+              title="Update Journal"
+              :ui="{
+                root: 'py-0 border-0 pb-10',
+                wrapper: 'lg:justify-center',
+                title:
+                  'text-white text-center  line-clamp-1 text-[22px] lg:text-[24px] leading-tight font-medium',
+              }"
+              class="flex-1 border-0"
+            />
+            <!-- This is just to make the title center -->
+            <div class="text-transparent">
+              <UIcon name="i-heroicons-chevron-left" class="size-6" />
+            </div>
+          </div>
+        </template>
 
         <template #footer>
           <div class="flex flex-row justify-between relative overflow-visible">
-            <!-- TODO: Change this to the book cover icon
+            <!-- TODO: Change this to the book cover icon 
               <img
                 :src="readingResource.imageUrl"
                 :alt="`${readingResource.title} Cover`"
@@ -56,11 +83,8 @@ async function handleSubmit(data: Omit<ReadingResourceSchema, 'authors'> & { aut
           </div>
         </template>
       </UCard>
-      <ReadingResourceForm
-        ref="formRef"
-        :loading
-        @submit="handleSubmit"
-      />
+
+      <ReadingResourceForm ref="formRef" :loading @submit="handleSubmit" />
     </UContainer>
   </div>
 </template>

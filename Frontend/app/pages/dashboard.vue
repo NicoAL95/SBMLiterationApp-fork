@@ -1,47 +1,55 @@
 <template>
   <div
-    class="max-w-3xl mx-auto flex flex-col items-center justify-center gap-4 p-4 h-full bg-white"
+    class="max-w-[1200px] mx-auto flex flex-col items-center justify-center gap-4 p-4 h-full"
   >
     <UContainer>
-      <UPageHeader class="border-none">
-        <template #title>
-          <h1 class="text-[36px] font-extrabold text-dark tracking-tighter">
-            Welcome,
-          </h1>
-          <h1
-            class="text-[36px] font-extrabold text-dark tracking-tighter leading-none"
-          >
-            Budi
-          </h1>
-        </template>
+      <div class="flex flex-col space-y-[32px]">
+        <div class="flex flex-col md:flex-row">
+          <UPageHeader class="border-none">
+            <template #title>
+              <h1 class="text-[36px] font-extrabold tracking-tighter">
+                Welcome,
+              </h1>
+              <h1
+                class="text-[36px] font-extrabold tracking-tighter leading-none"
+              >
+                Budi
+              </h1>
+            </template>
 
-        <template #description>
-          <p class="text-dark tracking-tight text-[20px]">
-            Start your reading journey now
-          </p>
-        </template>
-      </UPageHeader>
+            <template #description>
+              <p class="tracking-tight text-[20px]">
+                Start your reading journey now
+              </p>
+            </template>
+          </UPageHeader>
 
-      <Streak :week-dates="weekDates" />
+          <Streak :week-dates="weekDates" />
+        </div>
 
-      <UTabs
-        :items="tabs"
-        class="max-w-[300px] mt-[20px] mb-[30px] mx-auto"
-        :ui="{
-          indicator: 'bg-fire  ',
-          leadingIcon: 'text-white',
-          label: 'text-white',
-          list: 'bg-[#FCE3E1]',
-        }"
-      />
+        <div class=" ">
+          <UTabs
+            :items="tabs"
+            class="max-w-[300px] mt-[20px] mb-[30px] mx-auto md:mx-0 md:mr-auto"
+            :ui="{
+              indicator: 'bg-fire  ',
+              leadingIcon: 'text-white',
+              trigger: 'text-red-500',
+              list: 'bg-[#FCE3E1]',
+            }"
+          />
+          <ReadingResources :resources="resources" />
+        </div>
 
-      <ReadingResources :resources="resources" />
-      <ReadingReportList />
+        <ReadingRecomendationList />
+        <ReadingReportList />
+      </div>
     </UContainer>
   </div>
 </template>
 
 <script setup lang="ts">
+import ReadingRecomendationList from "~/components/home/Recomendation/ReadingRecomendationList.vue";
 import ReadingReportList from "~/components/reading-passport/ReadingReportList.vue";
 import ReadingResources from "~/components/reading-passport/ReadingResources.vue";
 import Streak from "~/components/reading-passport/Streak.vue";

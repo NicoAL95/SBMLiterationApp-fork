@@ -2,6 +2,7 @@
 // TODO: add discriminator for display for Dashboard (with image) and non Dashboard (without image)
 defineProps<{
   report: {
+    title: string;
     imageUrl: string;
     insight: string;
     timeSpent: string;
@@ -9,6 +10,7 @@ defineProps<{
     currentPage: number;
     totalPage: number;
   };
+  withImage?: boolean;
 }>();
 </script>
 
@@ -17,13 +19,14 @@ defineProps<{
   <UCard
     class=""
     :ui="{
-      root: 'ring ring-[#EDEDED] bg-white rounded-[12px]',
+      root: 'ring ring-[#EDEDED] bg-white rounded-[12px] max-w-3xl col-span-12 lg:col-span-6',
       body: 'p-2 sm:p-2  ',
     }"
   >
     <div class="flex flex-row gap-x-4">
       <div
-        class="w-[98px] sm:w-[110px] aspect-[3/4] shrink-0 overflow-hidden rounded-[12px]"
+        v-if="withImage"
+        class="w-[80px] sm:w-[110px] aspect-[3/4] shrink-0 overflow-hidden rounded-[12px]"
       >
         <img
           :src="report.imageUrl"
@@ -33,11 +36,19 @@ defineProps<{
       </div>
 
       <div class="flex flex-col">
-        <div class="flex flex-row justify-between">
-          <UBadge>Insight</UBadge>
+        <div class="flex flex-row justify-between" v-if="withImage">
+          <h1
+            class="text-[13px] sm:text-[15px] tracking-tight font-bold line-clamp-1 text-dark"
+          >
+            {{ report.title }}
+          </h1>
           <!-- TODO: Use chevron down icon -->
-          <nuxt-icon name="chevron-down" />
+          <nuxt-icon name="i-heroicons-chevron-down" />
         </div>
+
+        <UBadge class="w-fit rounded-full mb-1 text-[12px]" v-else
+          >Insight</UBadge
+        >
         <p
           class="mt-2 text-wrap text-dark line-clamp-2 font-medium tracking-tight text-[11px] sm:text-[13px]"
         >
@@ -45,7 +56,7 @@ defineProps<{
         </p>
 
         <USeparator
-          class="my-4"
+          class="my-2"
           :ui="{
             border: 'border-[#EDEDED]',
           }"
