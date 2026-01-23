@@ -70,11 +70,20 @@ const columns: TableColumn<ReadingCategory>[] = [
 </script>
 
 <template>
-  <UTable
-    sticky
-    :data="paging.rows.value"
-    :columns="columns"
-    class="flex-1"
-    :loading="paging.loading.value"
-  />
+  <div class="flex flex-col items-end gap-y-2">
+    <UTable
+      sticky
+      :data="paging.rows.value"
+      :columns="columns"
+      class="w-full"
+      :loading="paging.loading.value"
+    />
+    <UPagination
+      :page="paging.page.value"
+      :total="paging.totalRows.value"
+      :items-per-page="paging.rowsPerPage.value"
+      :show-controls="false"
+      @update:page="paging.goTo($event)"
+    />
+  </div>
 </template>
