@@ -1,5 +1,7 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
+using PureTCOWebApp.Core;
+using PureTCOWebApp.Core.Models;
 using PureTCOWebApp.Features.Auth.Domain;
 
 namespace PureTCOWebApp.Features.AdminModule.Endpoints;
@@ -7,11 +9,11 @@ namespace PureTCOWebApp.Features.AdminModule.Endpoints;
 public record AssignAdminRoleRequest(int UserId);
 
 public class AssignAdminRoleEndpoint(UserManager<User> userManager)
-    : Endpoint<AssignAdminRoleRequest>
+    : Endpoint<AssignAdminRoleRequest, ApiResponse>
 {
     public override void Configure()
     {
-        Post("{UserId}/assign");
+        Get("{UserId}/assign");
         Group<AdminEndpointGroup>();
     }
 
@@ -24,13 +26,13 @@ public class AssignAdminRoleEndpoint(UserManager<User> userManager)
             return;
         }
 
-        var result = await userManager.AddToRoleAsync(user, "Admin");
+        var result = await userManager.AddToRoleAsync(user, "admin");
         if (!result.Succeeded)
         {
-            await Send.ErrorsAsync(cancellation: ct);
+            await Send.ResultAsync(TypedResults.BadRequest<ApiResponse>(Result.Failure(new Error(result.Errors.First().Code, result.Errors.First().Description))));
             return;
         }
 
-        await Send.OkAsync(ct, ct);
+        await Send.NoContentAsync();
     }
 }

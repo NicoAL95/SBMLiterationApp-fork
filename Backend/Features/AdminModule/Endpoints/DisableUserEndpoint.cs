@@ -1,5 +1,7 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
+using PureTCOWebApp.Core;
+using PureTCOWebApp.Core.Models;
 using PureTCOWebApp.Features.Auth.Domain;
 
 namespace PureTCOWebApp.Features.AdminModule.Endpoints;
@@ -11,7 +13,7 @@ public class DisableUserEndpoint(UserManager<User> userManager)
 {
     public override void Configure()
     {
-        Post("{UserId}/disable");
+        Get("{UserId}/disable");
         Group<AdminEndpointGroup>();
     }
 
@@ -27,10 +29,10 @@ public class DisableUserEndpoint(UserManager<User> userManager)
         var result = await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
         if (!result.Succeeded)
         {
-            await Send.ErrorsAsync(cancellation: ct);
+            await Send.ResultAsync(TypedResults.BadRequest<ApiResponse>(Result.Failure(new Error(result.Errors.First().Code, result.Errors.First().Description))));
             return;
         }
 
-        await Send.OkAsync(ct, ct);
+        await Send.NoContentAsync(ct);
     }
 }

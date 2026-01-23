@@ -1,5 +1,7 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
+using PureTCOWebApp.Core;
+using PureTCOWebApp.Core.Models;
 using PureTCOWebApp.Features.Auth.Domain;
 
 namespace PureTCOWebApp.Features.AdminModule.Endpoints;
@@ -11,7 +13,7 @@ public class UnassignAdminRoleEndpoint(UserManager<User> userManager)
 {
     public override void Configure()
     {
-        Delete("{UserId}/unassign");
+        Get("{UserId}/unassign");
         Group<AdminEndpointGroup>();
     }
 
@@ -24,13 +26,14 @@ public class UnassignAdminRoleEndpoint(UserManager<User> userManager)
             return;
         }
 
-        var result = await userManager.RemoveFromRoleAsync(user, "Admin");
+        var result = await userManager.RemoveFromRoleAsync(user, "admin");
+
         if (!result.Succeeded)
         {
-            await Send.ErrorsAsync(cancellation: ct);
+            await Send.ResultAsync(TypedResults.BadRequest<ApiResponse>(Result.Failure(new Error(result.Errors.First().Code, result.Errors.First().Description))));
             return;
         }
 
-        await Send.OkAsync(ct, ct);
+        await Send.NoContentAsync(ct);
     }
 }

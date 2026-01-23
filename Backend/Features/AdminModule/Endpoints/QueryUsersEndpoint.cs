@@ -27,7 +27,7 @@ public class QueryUsersEndpoint(UserManager<User> userManager)
 {
     public override void Configure()
     {
-        Get("users");
+        Get("");
         Group<AdminEndpointGroup>();
     }
 
