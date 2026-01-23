@@ -1,54 +1,81 @@
 <script lang="ts" setup>
-import { $authedFetch } from '~/apis/api'
-import ReadingResourceForm, { type ReadingResourceSchema } from '~/components/reading-passport/ReadingResourceForm.vue'
+import { $authedFetch } from "~/apis/api";
+import ReadingResourceForm, {
+  type ReadingResourceSchema,
+} from "~/components/reading-passport/ReadingResourceForm.vue";
 
-const loading = ref(false)
-async function handleSubmit(data: Omit<ReadingResourceSchema, 'authors'> & { authors: string }) {
+const loading = ref(false);
+async function handleSubmit(
+  data: Omit<ReadingResourceSchema, "authors"> & { authors: string },
+) {
   try {
-    loading.value = true
-    await $authedFetch('/reading-resources/journals', {
-      method: 'POST',
+    loading.value = true;
+    await $authedFetch("/reading-resources/journals", {
+      method: "POST",
       body: {
         ...data,
-        userId: 1
-      }
-    })
+        userId: 1,
+      },
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
 
 <template>
   <!-- TODO: Adjust spacing on the page -->
-  <div class="flex flex-col items-center justify-center gap-4 p-4 h-full">
+  <div class="flex flex-col items-center justify-center gap-4 h-full">
     <UContainer class="flex flex-col gap-y-4">
       <!-- TODO: Style below card to follow figma design -->
       <UCard
         class="overflow-visible mb-[100px]"
+        :ui="{
+          header: ' border-0',
+          root: 'bg-[#265FC4] mx-[-16px] sm:mx-[-24px] lg:mx-[-32px] rounded-t-none rounded-b-3xl px-4 py-4',
+        }"
       >
-        <UPageHeader
-          class="border-none"
-          title="Add Journal/Article"
-        />
+        <template #header>
+          <div class="flex items-start justify-between gap-2">
+            <div class="text-white">
+              <UIcon name="i-heroicons-chevron-left" class="size-6" />
+            </div>
+            <UPageHeader
+              title="Add Journal"
+              :ui="{
+                root: 'py-0 border-0 pb-10',
+                wrapper: 'lg:justify-center',
+                title:
+                  'text-white text-center  line-clamp-1 text-[22px] lg:text-[24px] leading-tight font-medium',
+              }"
+              class="flex-1 border-0"
+            />
+            <!-- This is just to make the title center -->
+            <div class="text-transparent">
+              <UIcon name="i-heroicons-chevron-left" class="size-6" />
+            </div>
+          </div>
+        </template>
 
         <template #footer>
-          <div class="flex flex-row justify-between relative overflow-visible">
-            <!-- TODO: Change this to the book cover icon
-              <img
-                :src="readingResource.imageUrl"
-                :alt="`${readingResource.title} Cover`"
-                class="h-48 aspect-2/3 rounded-md absolute -top-12"
-              >
-            -->
+          <div
+            class="flex flex-row justify-center relative overflow-visible border-0 ring-0 text-white mb-12 md:mb-29"
+          >
+            <div
+              class="h-48 md:h-60 aspect-2/3 rounded-2xl absolute -top-12 flex justify-center items-center text-[#3566CD] bg-[#F5F5F7]"
+            >
+              <UIcon name="i-heroicons-book-open" class="size-14" />
+            </div>
+
+            <h6
+              class="absolute bottom-[-175px] md:bottom-[-225px] left-1/2 -translate-x-1/2 text-[#737373] dark:text-white text-[14px]"
+            >
+              Cover
+            </h6>
           </div>
         </template>
       </UCard>
-      <ReadingResourceForm
-        journal
-        :loading
-        @submit="handleSubmit"
-      />
+      <ReadingResourceForm journal :loading @submit="handleSubmit" />
     </UContainer>
   </div>
 </template>

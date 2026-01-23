@@ -1,133 +1,132 @@
 <script setup lang="ts">
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
+import { z } from "zod";
+import type { FormSubmitEvent } from "#ui/types";
 
 const props = defineProps<{
-  loading?: boolean
-  journal?: boolean
-}>()
+  loading?: boolean;
+  journal?: boolean;
+}>();
 
 const schema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  isbn: props.journal ? z.string().optional() : z.string().min(1, 'ISBN is required'),
-  authors: z.array(z.string().min(1, 'Author name is required')).min(1, 'At least one author is required'),
-  publishYear: z.string().regex(/^\d{4}$/, 'Publish year must be a 4-digit year'),
-  bookCategory: z.string().min(1, 'Book category is required'),
-  page: z.coerce.number().min(1, 'Page count must be at least 1'),
-  resourceLink: z.url('Must be a valid URL').optional()
-})
+  title: z.string().min(1, "Title is required"),
+  isbn: props.journal
+    ? z.string().optional()
+    : z.string().min(1, "ISBN is required"),
+  authors: z
+    .array(z.string().min(1, "Author name is required"))
+    .min(1, "At least one author is required"),
+  publishYear: z
+    .string()
+    .regex(/^\d{4}$/, "Publish year must be a 4-digit year"),
+  bookCategory: z.string().min(1, "Book category is required"),
+  page: z.coerce.number().min(1, "Page count must be at least 1"),
+  resourceLink: z.url("Must be a valid URL").optional(),
+});
 
-export type ReadingResourceSchema = z.output<typeof schema>
+export type ReadingResourceSchema = z.output<typeof schema>;
 
 const state = reactive({
-  title: '',
-  isbn: '',
-  authors: [''],
-  publishYear: '',
-  bookCategory: '',
+  title: "",
+  isbn: "",
+  authors: [""],
+  publishYear: "",
+  bookCategory: "",
   page: NaN,
-  resourceLink: ''
-})
+  resourceLink: "",
+});
 
 const emit = defineEmits<{
-  (e: 'submit', data: Omit<ReadingResourceSchema, 'authors'> & { authors: string }): void
-}>()
+  (
+    e: "submit",
+    data: Omit<ReadingResourceSchema, "authors"> & { authors: string },
+  ): void;
+}>();
 
 function addAuthor() {
-  state.authors.push('')
+  state.authors.push("");
 }
 
 function removeAuthor(index: number) {
   if (state.authors.length > 1) {
-    state.authors.splice(index, 1)
+    state.authors.splice(index, 1);
   }
 }
 
 function setState(data: Partial<ReadingResourceSchema>) {
-  if (data.title !== undefined) state.title = data.title
-  if (data.isbn !== undefined) state.isbn = data.isbn
-  if (data.authors !== undefined) state.authors = data.authors.length > 0 ? data.authors : ['']
-  if (data.publishYear !== undefined) state.publishYear = data.publishYear
-  if (data.bookCategory !== undefined) state.bookCategory = data.bookCategory
-  if (data.page !== undefined) state.page = data.page
-  if (data.resourceLink !== undefined) state.resourceLink = data.resourceLink
+  if (data.title !== undefined) state.title = data.title;
+  if (data.isbn !== undefined) state.isbn = data.isbn;
+  if (data.authors !== undefined)
+    state.authors = data.authors.length > 0 ? data.authors : [""];
+  if (data.publishYear !== undefined) state.publishYear = data.publishYear;
+  if (data.bookCategory !== undefined) state.bookCategory = data.bookCategory;
+  if (data.page !== undefined) state.page = data.page;
+  if (data.resourceLink !== undefined) state.resourceLink = data.resourceLink;
 }
 
 function resetState() {
-  state.title = ''
-  state.isbn = ''
-  state.authors = ['']
-  state.publishYear = ''
-  state.bookCategory = ''
-  state.page = NaN
-  state.resourceLink = ''
+  state.title = "";
+  state.isbn = "";
+  state.authors = [""];
+  state.publishYear = "";
+  state.bookCategory = "";
+  state.page = NaN;
+  state.resourceLink = "";
 }
 
 defineExpose({
   setState,
-  resetState
-})
+  resetState,
+});
 
 async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
-  emit('submit',
-    {
-      ...event.data,
-      authors: event.data.authors
-        .map(author => author.trim())
-        .filter(author => author.length > 0)
-        .join(', ')
-    })
+  emit("submit", {
+    ...event.data,
+    authors: event.data.authors
+      .map((author) => author.trim())
+      .filter((author) => author.length > 0)
+      .join(", "),
+  });
   // TODO: loading state must be implemented, maybe from props
 }
 </script>
 
 <template>
-  <UCard variant="soft">
-    <UForm
-      :schema="schema"
-      :state="state"
-      class="space-y-6"
-      @submit="onSubmit"
-    >
+  <UCard
+    variant="soft"
+    :ui="{
+      body: 'bg-white dark:bg-transparent',
+    }"
+  >
+    <UForm :schema="schema" :state="state" class="space-y-6" @submit="onSubmit">
       <!-- Title field - full width -->
-      <UFormField
-        label="Title"
-        name="title"
-        required
-      >
+      <UFormField label="Title" name="title" required>
         <UInput
           v-model="state.title"
           placeholder="Enter book title"
           size="lg"
+          class="w-full"
         />
       </UFormField>
 
       <!-- ISBN and Publish Year - responsive grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <UFormField
-          v-if="!journal"
-          label="ISBN"
-          name="isbn"
-          required
-        >
+        <UFormField v-if="!journal" label="ISBN" name="isbn" required>
           <UInput
             v-model="state.isbn"
             placeholder="Enter ISBN"
             size="lg"
+            class="w-full"
           />
         </UFormField>
 
-        <UFormField
-          label="Publish Year"
-          name="publishYear"
-          required
-        >
+        <UFormField label="Publish Year" name="publishYear" required>
           <UInput
             v-model="state.publishYear"
             type="text"
             placeholder="Enter publish year"
             size="lg"
             maxlength="4"
+            class="w-full"
           />
         </UFormField>
       </div>
@@ -135,7 +134,9 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
       <!-- Authors field - dynamic array -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          >
             Authors <span class="text-red-500">*</span>
           </label>
           <UButton
@@ -155,14 +156,12 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
           class="flex gap-2 items-start"
         >
           <div class="flex-1">
-            <UFormField
-              :name="`authors[${index}]`"
-              required
-            >
+            <UFormField :name="`authors[${index}]`" required>
               <UInput
                 v-model="state.authors[index]"
                 :placeholder="`Author ${index + 1} name`"
                 size="lg"
+                class="w-full"
               />
             </UFormField>
           </div>
@@ -184,28 +183,22 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
 
       <!-- Book Category and Page Count - responsive grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <UFormField
-          label="Book Category"
-          name="bookCategory"
-          required
-        >
+        <UFormField label="Book Category" name="bookCategory" required>
           <UInput
             v-model="state.bookCategory"
             placeholder="Enter book category"
             size="lg"
+            class="w-full"
           />
         </UFormField>
 
-        <UFormField
-          label="Page Count"
-          name="page"
-          required
-        >
+        <UFormField label="Page Count" name="page" required>
           <UInput
             v-model="state.page"
             type="number"
             placeholder="Enter page count"
             size="lg"
+            class="w-full"
           />
         </UFormField>
       </div>
@@ -220,6 +213,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
           type="url"
           placeholder="https://example.com/resource"
           size="lg"
+          class="w-full"
         />
       </UFormField>
 
@@ -228,7 +222,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
         <UButton
           type="submit"
           size="lg"
-          class="px-8"
+          class="px-8 w-full text-center flex justify-center"
           :loading
         >
           Save
