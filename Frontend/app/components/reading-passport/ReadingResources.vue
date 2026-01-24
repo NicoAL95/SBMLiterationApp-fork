@@ -63,7 +63,9 @@ function onRefresh() {
 }
 
 function onCreate() {
-  useRouter().push(props.journal ? { name: 'CreateReadingBook' } : { name: 'CreateReadingJournal' })
+  useRouter().push(props.journal
+    ? { name: 'CreateReadingJournal' }
+    : { name: 'CreateReadingBook' })
 }
 
 function goToReportPage(id: number) {
