@@ -100,20 +100,20 @@ const items: DropdownMenuItem[][] = [
           <h1>{{ resource.title }}</h1>
         </div>
 
-       <div class="flex-1">
-        <UDropdownMenu :items>
-          <UButton
-            class="dark"
-            variant="ghost"
-            :ui="{
-              base: 'hover:bg-white/10'
-            }"
-            color="neutral"
-            size="xl"
-            icon="i-heroicons-ellipsis-vertical"
-          />
-        </UDropdownMenu>
-       </div>
+        <div class="flex-1">
+          <UDropdownMenu :items>
+            <UButton
+              class="dark"
+              variant="ghost"
+              :ui="{
+                base: 'hover:bg-white/10'
+              }"
+              color="neutral"
+              size="xl"
+              icon="i-heroicons-ellipsis-vertical"
+            />
+          </UDropdownMenu>
+        </div>
       </div>
     </template>
 

@@ -1,14 +1,53 @@
 <script setup lang="ts">
+import { $authedFetch, handleResponseError, type ApiResponse } from '~/apis/api'
+
 // TODO: add discriminator for display for Dashboard (with image) and non Dashboard (without image)
 defineProps<{
   book: {
-    title: string;
-    author: string;
-    imageUrl: string;
-    totalPage: number;
-    xp: number;
-  };
-}>();
+    id: number
+    title: string
+    author: string
+    imageUrl: string
+    totalPage: number
+    category: string
+    xp: number
+  }
+}>()
+
+const emit = defineEmits<{
+  (e: 'refresh'): void
+}>()
+
+const loading = ref(false)
+const toast = useToast()
+
+async function addToReadList(book: { id: number }) {
+  try {
+    loading.value = true
+    const result = await $authedFetch<ApiResponse>('/reading-resources/from-recommendation', {
+      method: 'POST',
+      body: {
+        recommendationId: book.id
+      }
+    })
+
+    if (result.errorCode || result.errorDescription) {
+      handleResponseError(result)
+      return
+    }
+
+    toast.add({
+      title: 'Book added to your reading list!',
+      color: 'success'
+    })
+
+    emit('refresh')
+  } catch (error) {
+    handleResponseError(error)
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -17,7 +56,7 @@ defineProps<{
     class=""
     :ui="{
       root: 'ring ring-0 border border-[#D1D1D1] bg-white rounded-[22px] w-fit',
-      body: 'p-2 sm:p-2  ',
+      body: 'p-2 sm:p-2  '
     }"
   >
     <div class="flex flex-col gap-x-4">
@@ -33,7 +72,7 @@ defineProps<{
           :src="book.imageUrl"
           alt="Book Cover"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
 
       <div class="flex flex-col mt-[15px]">
@@ -79,6 +118,8 @@ defineProps<{
         <div>
           <UButton
             class="w-full font-semibold rounded-full text-center bg-primary text-[13px] justify-center"
+            :loading="loading"
+            @click="addToReadList(book)"
           >
             Add to Read List
           </UButton>

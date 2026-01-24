@@ -26,6 +26,7 @@ public class GetReadingRecommendationByIdEndpoint(ApplicationDbContext dbContext
     {
         Get("{id}");
         Group<ReadingRecommendationEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(GetReadingRecommendationByIdRequest req, CancellationToken ct)

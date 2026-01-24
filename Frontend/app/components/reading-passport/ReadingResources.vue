@@ -51,6 +51,10 @@ async function fetch() {
   }
 }
 
+defineExpose({
+  fetch
+})
+
 onMounted(async () => {
   await fetch()
 

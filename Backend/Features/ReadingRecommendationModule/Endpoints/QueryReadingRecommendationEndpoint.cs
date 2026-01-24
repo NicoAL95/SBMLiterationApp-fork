@@ -18,6 +18,7 @@ public class QueryReadingRecommendationEndpoint(ApplicationDbContext dbContext)
     {
         Get("");
         Group<ReadingRecommendationEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(QueryReadingRecommendationRequest req, CancellationToken ct)
