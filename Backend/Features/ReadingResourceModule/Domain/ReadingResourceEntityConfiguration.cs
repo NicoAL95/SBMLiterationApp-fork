@@ -149,6 +149,10 @@ public partial class ReadingReportConfiguration : IEntityTypeConfiguration<Readi
             .IsUnicode(false)
             .HasColumnName("insight");
 
+        builder.Property(e => e.TimeSpent)
+            .IsRequired()
+            .HasColumnName("time_spent");
+
         builder.Property(e => e.Status)
             .HasDefaultValue(0)
             .HasColumnName("status");
