@@ -41,7 +41,7 @@ public class UpdateUserInfoRequestValidator : Validator<UpdateUserInfoRequest>
         RuleFor(x => x.GenerationYear)
             .MaximumLength(4)
             .WithMessage("Generation Year must not exceed 4 characters")
-            .Must((year) => int.TryParse(year, out var y) && y >= 1900 && y <= DateTime.Now.Year)
+            .Must((year) => int.TryParse(year, out var y) && y >= 1900 && y <= DateTime.UtcNow.Year)
             .WithMessage("Generation Year must be a valid year")
             .NotEmpty()
             .WithMessage("Generation Year is required");

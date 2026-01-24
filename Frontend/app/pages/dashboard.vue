@@ -15,33 +15,6 @@ definePageMeta({
   keepalive: true
 })
 
-const getCurrentWeekDates = () => {
-  const week = []
-  const today = new Date()
-  const currentDay = today.getDay()
-  const startOfWeek = new Date(today)
-  startOfWeek.setDate(today.getDate() - currentDay)
-
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startOfWeek)
-    date.setDate(startOfWeek.getDate() + i)
-    week.push({
-      date: date,
-      day: date.toLocaleDateString('en-US', { weekday: 'long' }),
-      isStreak: Math.random() > 0.5 // Replace with actual streak logic
-    })
-  }
-  return week
-}
-
-const weekDates = ref<
-  {
-    date: Date
-    day: string
-    isStreak: boolean
-  }[]
->([])
-
 const booksRef = useTemplateRef<typeof ReadingResources>('books')
 const journalsRef = useTemplateRef<typeof ReadingResources>('journals')
 const recommendation = useTemplateRef<typeof ReadingRecomendationList>('recommendation')
@@ -77,8 +50,6 @@ function fetchRecommendation() {
 }
 
 onMounted(async () => {
-  weekDates.value = getCurrentWeekDates()
-
   await fetchReport()
 })
 
@@ -132,7 +103,7 @@ const tabs = [
           </template>
         </UPageHeader>
 
-        <Streak :week-dates="weekDates" />
+        <Streak />
       </div>
 
       <div class="grid grid-cols-12">
