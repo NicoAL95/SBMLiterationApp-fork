@@ -40,27 +40,43 @@
             class="max-w-[300px] mt-[20px] mb-[30px] mx-auto md:mx-0 md:mr-auto"
           >
             <template #books>
-              <ReadingResources :resources="resources" />
+              <ReadingResources />
             </template>
             <template #journal-paper>
               <ReadingResources
                 journal
-                :resources="resources"
               />
             </template>
           </UTabs>
         </div>
 
         <ReadingRecomendationList />
-        <ReadingReportList />
+
+        <div
+          v-if="reportPending"
+          class="flex items-center justify-center py-12"
+        >
+          <UIcon
+            name="i-heroicons-arrow-path"
+            class="animate-spin text-4xl"
+          />
+        </div>
+
+        <ReadingReportList
+          v-else
+          :reports="readingReports"
+        />
       </div>
     </UContainer>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $authedFetch, handleResponseError } from '~/apis/api'
+import type { PagingResult } from '~/apis/paging'
 import ReadingRecomendationList from '~/components/home/Recomendation/ReadingRecomendationList.vue'
 import ReadingReportList from '~/components/reading-passport/ReadingReportList.vue'
+import type { ReadingReportData } from '~/components/reading-passport/ReadingReportList.vue'
 import ReadingResources from '~/components/reading-passport/ReadingResources.vue'
 import Streak from '~/components/reading-passport/Streak.vue'
 
@@ -95,38 +111,36 @@ const weekDates = ref<
   }[]
 >([])
 
-onMounted(() => {
-  weekDates.value = getCurrentWeekDates()
-})
-
-async function fetch() {
-
+const readingReports = ref<ReadingReportData[]>([])
+const reportPending = ref(false)
+async function fetchReport() {
+  try {
+    reportPending.value = true
+    const response = await $authedFetch<PagingResult<ReadingReportData>>('/reading-resources/reports', {
+      query: {
+        page: 1,
+        pageSize: 100
+      }
+    })
+    if (response.rows) {
+      readingReports.value = response.rows
+    }
+  } catch (err) {
+    handleResponseError(err)
+  } finally {
+    reportPending.value = false
+  }
 }
 
-const resources = ref([
-  {
-    title: 'Domain Driven Design',
-    imageUrl:
-      'https://miro.medium.com/v2/resize:fit:1200/1*90o12yshV8kprH8mbXdnKQ.png',
-    totalPages: 180,
-    totalReadPages: 125,
-    type: 'book' as const
-  },
-  {
-    title: 'Machine Learning Fundamentals',
-    imageUrl: 'https://picsum.photos/seed/journal1/400/300',
-    totalPages: 45,
-    totalReadPages: 32,
-    type: 'journal' as const
-  },
-  {
-    title: '1984',
-    imageUrl: 'https://picsum.photos/seed/book2/400/300',
-    totalPages: 328,
-    totalReadPages: 89,
-    type: 'book' as const
-  }
-])
+onMounted(async () => {
+  weekDates.value = getCurrentWeekDates()
+
+  await fetchReport()
+})
+
+onUpdated(async () => {
+  await fetchReport()
+})
 
 const tabs = [
   {
