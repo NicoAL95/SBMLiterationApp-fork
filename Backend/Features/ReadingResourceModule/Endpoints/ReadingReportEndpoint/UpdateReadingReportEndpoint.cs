@@ -8,7 +8,8 @@ using PureTCOWebApp.Data;
 namespace PureTCOWebApp.Features.ReadingResourceModule.Endpoints.ReadingReportEndpoint;
 
 public record UpdateReadingReportRequest(
-    string Insight);
+    string Insight,
+    int? TimeSpent = null);
 
 public class UpdateReadingReportValidator : AbstractValidator<UpdateReadingReportRequest>
 {
@@ -19,6 +20,11 @@ public class UpdateReadingReportValidator : AbstractValidator<UpdateReadingRepor
             .WithMessage("Insight is required.")
             .MaximumLength(1000)
             .WithMessage("Insight must not exceed 1000 characters.");
+
+        RuleFor(x => x.TimeSpent)
+            .GreaterThan(0)
+            .When(x => x.TimeSpent.HasValue)
+            .WithMessage("Time spent must be greater than 0 minutes.");
     }
 }
 
@@ -53,7 +59,7 @@ public class UpdateReadingReportEndpoint(ApplicationDbContext context, UnitOfWor
             return;
         }
 
-        report.Update(req.Insight);
+        report.Update(req.Insight, req.TimeSpent);
         var result = await unitOfWork.SaveChangesAsync(ct);
 
         if (result.IsFailure)

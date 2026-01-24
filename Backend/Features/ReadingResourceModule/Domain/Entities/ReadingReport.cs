@@ -12,6 +12,7 @@ public class ReadingReport : AuditableEntity
     public DateTime ReportDate { get; protected set; }
     public int CurrentPage { get; protected set; }
     public string Insight { get; protected set; }
+    public int TimeSpent { get; protected set; }
 
     [JsonIgnore]
     public ReadingResourceBase ReadingResource { get; protected set; }
@@ -24,7 +25,8 @@ public class ReadingReport : AuditableEntity
         int userId,
         int readingResourceId,
         int currentPage,
-        string insight
+        string insight,
+        int timeSpent
     )
     {
         var entity = new ReadingReport
@@ -33,6 +35,7 @@ public class ReadingReport : AuditableEntity
             ReadingResourceId = readingResourceId,
             CurrentPage = currentPage,
             Insight = insight,
+            TimeSpent = timeSpent,
             ReportDate = DateTime.UtcNow
         };
 
@@ -41,8 +44,10 @@ public class ReadingReport : AuditableEntity
         return entity;
     }
 
-    public void Update(string insight)
+    public void Update(string insight, int? timeSpent = null)
     {
         Insight = insight;
+        if (timeSpent.HasValue)
+            TimeSpent = timeSpent.Value;
     }
 }

@@ -12,7 +12,8 @@ namespace PureTCOWebApp.Features.ReadingResourceModule.Endpoints.ReadingReportEn
 public record CreateReadingReportRequest(
     int ReadingResourceId,
     int CurrentPage,
-    string Insight);
+    string Insight,
+    int TimeSpent);
 
 public class CreateReadingReportValidator : AbstractValidator<CreateReadingReportRequest>
 {
@@ -31,6 +32,10 @@ public class CreateReadingReportValidator : AbstractValidator<CreateReadingRepor
             .WithMessage("Insight is required.")
             .MaximumLength(1000)
             .WithMessage("Insight must not exceed 1000 characters.");
+
+        RuleFor(x => x.TimeSpent)
+            .GreaterThan(0)
+            .WithMessage("Time spent must be greater than 0 minutes.");
     }
 }
 
@@ -76,7 +81,8 @@ public class CreateReadingReportEndpoint(ApplicationDbContext context, UnitOfWor
             userId,
             req.ReadingResourceId,
             req.CurrentPage,
-            req.Insight);
+            req.Insight,
+            req.TimeSpent);
 
         context.ReadingReports.Add(report);
         var result = await unitOfWork.SaveChangesAsync(ct);
