@@ -16,10 +16,10 @@ public class ReadingRecommendationCreatedEventHandler : IDomainEventHandler<Read
 
     public async Task Handle(ReadingRecommendationCreatedEvent domainEvent, CancellationToken cancellationToken)
     {
-        var categoryName = domainEvent.Recommendation.ReadingCategory;
+        var categoryName = domainEvent.Recommendation.ReadingCategory.Trim();
 
         var exists = await _dbContext.ReadingCategories
-            .AnyAsync(c => c.CategoryName.ToLower() == categoryName.ToLower(), cancellationToken);
+            .AnyAsync(c => c.CategoryName.Equals(categoryName, StringComparison.CurrentCultureIgnoreCase), cancellationToken);
 
         if (!exists)
         {
