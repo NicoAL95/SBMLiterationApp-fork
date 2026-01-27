@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { $authedFetch, handleResponseError, type ApiResponse } from '~/apis/api'
+import { handleResponseError, type ApiResponse } from '~/apis/api'
 
 interface StreakData {
   currentStreakDays: number
@@ -18,11 +18,18 @@ interface WeekDateDisplay {
   isToday: boolean
 }
 
-const streakData = ref<StreakData | null>(null)
-const pending = ref(false)
+const useAuthedFetch = useNuxtApp().$useAuthedFetch
+
+const { data: response, pending, error } = await useAuthedFetch<ApiResponse<StreakData>>('/streaks/me')
+
+watch(error, (err) => {
+  if (err) handleResponseError(err)
+})
+
+const streakData = computed(() => response.value?.data || null)
 
 const weekDates = computed<WeekDateDisplay[]>(() => {
-  if (!streakData.value?.weeklyStatus) return []
+  if (!streakData?.value?.weeklyStatus) return []
 
   return streakData.value.weeklyStatus.map((status) => {
     // Parse yyyy-mm-dd format explicitly
@@ -56,26 +63,6 @@ const showRightMonth = computed(() => {
   const firstDate = weekDates.value[0]
   // Show right month if it's different from first month
   return lastDate?.month !== firstDate?.month ? lastDate?.month : null
-})
-
-async function fetchStreak() {
-  try {
-    pending.value = true
-    const response = await $authedFetch<ApiResponse<StreakData>>('/streaks/me')
-    if (response.data) {
-      streakData.value = response.data
-    } else {
-      handleResponseError(response)
-    }
-  } catch (err) {
-    handleResponseError(err)
-  } finally {
-    pending.value = false
-  }
-}
-
-onMounted(() => {
-  fetchStreak()
 })
 </script>
 
